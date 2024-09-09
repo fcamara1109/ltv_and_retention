@@ -1,0 +1,36 @@
+with base as (
+  select
+    user_id,
+    dt,
+    date_trunc(dt, week) as week,
+    date_trunc(dt, month) as month,
+    sum(revenue) as inc_amt,
+    min(dt) over (partition by user_id) as first_dt,
+    date_trunc(min(dt) over (partition by user_id), week) as first_week,
+    date_trunc(min(dt) over (partition by user_id), month) as first_month,
+  from `{your_payments_table}`
+
+  group by all
+),
+
+-- calculate time since first purchase
+d as (
+  select 
+    base.*,
+    date_diff(dt, base.first_dt, day) as days_since_first,
+    date_diff(week, base.first_week, week) as weeks_since_first,
+    date_diff(month, base.first_month, month) as months_since_first,
+
+  from base
+)
+
+-- join with whatever variables you want. suggestion: join with your sign up and first purchase attribution data.
+-- important: the variables cannot have null values, otherwise the joins won't work properly later at the cohort query. so check all your columns for null values and if you find, use coalesce or ifnull to set a constant when null.
+select 
+  d.*,
+ ` {your_first_purchase_variables}`,
+  `{your_sign_up_variables}`
+
+from d
+  left join {your_first_purchase_table} f on d.user_id = f.user_id
+  left join {your_sign_up_table} sus on d.user_id = sus.user_id
