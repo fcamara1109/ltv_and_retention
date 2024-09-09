@@ -1,0 +1,36 @@
+with base as (
+select
+  coalesce(tm.month, date_add(lm.month, interval 1 month)) as month,
+  coalesce(tm.user_id, lm.user_id) user_id,
+
+  -- Count Monthly Active Users (MAU).
+  count(distinct tm.user_id) as mau,
+  
+  -- Count retained users (present in both this month and the last).
+  count(distinct case when lm.user_id is not null then tm.user_id else null end) as retained,
+  
+  -- Count new users (whose first_month equals to the current month).
+  count(distinct case when tm.first_month = tm.month then tm.user_id else null end) as `new`,
+  
+  -- Count resurrected users (who were not present last month but returned this month).
+  count(distinct case when tm.first_month != tm.month and lm.user_id is null then tm.user_id else null end) as resurrected,
+  
+  -- Count churned users (who were present last month but not this month), making the count negative.
+  -1 * count(distinct case when tm.user_id is null then lm.user_id else null end) as churned
+  from
+    `{your_dataset}.daily_rev_enriched` tm full
+    outer join `{your_dataset}.daily_rev_enriched` lm on tm.user_id = lm.user_id
+    and tm.month = date_add(lm.month, interval 1 month)
+  group by all
+)
+
+select 
+  base.*, 
+  -- preceding_mau is used to calculate month-over-month retention rate.
+  lag(mau) over (partition by base.user_id order by month) as preceding_mau,
+  f.* except(user_id), 
+  sus.* except(user_id)
+
+from base
+  left join {your_first_purchase_table} f on base.user_id = f.user_id
+  left join {your_sign_up_table} sus on base.user_id = sus.user_id
