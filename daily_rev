@@ -1,0 +1,23 @@
+with base as (
+  select
+    user_id,
+    dt,
+    date_trunc(dt, week) as week,
+    date_trunc(dt, month) as month,
+    sum(revenue) as inc_amt,
+    min(dt) over (partition by user_id) as first_dt,
+    date_trunc(min(dt) over (partition by user_id), week) as first_week,
+    date_trunc(min(dt) over (partition by user_id), month) as first_month,
+  from `{your_payments_table}`
+
+  group by all
+),
+
+-- calculate time since first purchase
+select 
+  base.*,
+  date_diff(dt, base.first_dt, day) as days_since_first,
+  date_diff(week, base.first_week, week) as weeks_since_first,
+  date_diff(month, base.first_month, month) as months_since_first,
+
+from base
