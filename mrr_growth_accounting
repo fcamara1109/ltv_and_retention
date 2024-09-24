@@ -1,15 +1,4 @@
-with 
-
-m as (
-  select
-    user_id,
-    month,
-    sum(inc_amt) inc_amt,
-    first_month,
-    months_since_first
-  from `{your_dataset}.daily_rev_enriched`
-  group by all
-),
+with
 
 base as (
   select
@@ -68,8 +57,8 @@ base as (
       end
     ) as churned 
     from
-      m tm 
-      full outer join m lm on tm.user_id = lm.user_id
+      `{your_dataset}.daily_rev` tm 
+      full outer join `{your_dataset}.daily_rev` lm on tm.user_id = lm.user_id
       and tm.month = date_add(lm.month, interval 1 month) 
 
   group by all
