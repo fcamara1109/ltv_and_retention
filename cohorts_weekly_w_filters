@@ -1,4 +1,19 @@
-with cohorts as (
+with 
+
+-- join with whatever variables you want. suggestion: join with your sign up and first purchase attribution data.
+-- important: the variables cannot have null values, otherwise the joins won't work properly later at the cohort query. so check all your columns for null values and if you find, use coalesce or ifnull to set a constant when null.
+daily_rev_enriched as (
+  select 
+    d.*,
+   ` {your_first_purchase_variables}`,
+    `{your_sign_up_variables}`
+  
+  from `{your_dataset}.daily_rev` d
+    left join {your_first_purchase_table} f on d.user_id = f.user_id
+    left join {your_sign_up_table} sus on d.user_id = sus.user_id
+),
+
+cohorts as (
   select
     {all_your_first_purchase_variables},
 
@@ -10,7 +25,7 @@ with cohorts as (
     count(distinct user_id) as users,
     sum(inc_amt) as inc_amt
   from
-    `{your_dataset}.daily_rev_enriched`
+    daily_rev_enriched
   group by all
 ),
 
