@@ -8,7 +8,7 @@ This repository contains queries made in Google Big Query to calculate MAU, MRR,
 
 The queries generate what’s needed for the charts from part 1 to 4.
 
-The difference is the added functionality of having filters.
+The key difference is the added functionality of having filters.
 
 In order to have month-over-month retention, I suggest calculating in Looker. The formulas are: `SUM(retained)/SUM(preceding_mau)` for MAU and `SUM(retained)/SUM(preceding_mrr)` for MRR.
 
