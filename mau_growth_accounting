@@ -18,8 +18,8 @@ select
   -- Count churned users (who were present last month but not this month), making the count negative.
   -1 * count(distinct case when tm.user_id is null then lm.user_id else null end) as churned
   from
-    `{your_dataset}.daily_rev_enriched` tm full
-    outer join `{your_dataset}.daily_rev_enriched` lm on tm.user_id = lm.user_id
+    `{your_dataset}.daily_rev` tm full
+    outer join `{your_dataset}.daily_rev` lm on tm.user_id = lm.user_id
     and tm.month = date_add(lm.month, interval 1 month)
   group by all
 )
