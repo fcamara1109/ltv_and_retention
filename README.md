@@ -18,3 +18,9 @@ Now, Quick Ratio I suggest adjusting with a -1 to better visualize in charts:
 
 
 As time goes by, I'll add answers to eventual technical questions here.
+
+# FAQ
+
+## ⚠️ IMPORTANT: Added variables cannot have null values, otherwise these users will be excluded from the calculations
+
+If you're seeing less users in the cohorts in your query with filters than against the query without filters, most likely is because some variables in the filters have null values. These should be treated in their origin or in daily_rev_enriched.
