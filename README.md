@@ -19,7 +19,7 @@ Now, Quick Ratio I suggest adjusting with a -1 to better visualize in charts:
 
 As time goes by, I'll add answers to eventual technical questions here.
 
-# FAQ
+# FAQ and Common Errors
 
 ### ⚠️ IMPORTANT: Added filters cannot have null values, otherwise these users will be excluded from the calculations
 
