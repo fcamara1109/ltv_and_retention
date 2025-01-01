@@ -26,3 +26,4 @@ As time goes by, I'll add answers to eventual technical questions here.
 If you're seeing less users in the cohorts in your query with filters than against the query without filters, most likely is because some variables in the filters have null values. These should be treated in their origin or in daily_rev_enriched. To treat, you can use coalesce() or ifnull().
 
 ### Also, added filters must have one row per user id, otherwise it'll duplicate the user.
+This error is harder to identify as it'll likely increase your user count but also your cumulative amount.
